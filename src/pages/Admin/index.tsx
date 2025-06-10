@@ -116,7 +116,7 @@ function Admin() {
           </label>
           <Input
             type="text"
-            name="link-name"
+            id="link-name"
             placeholder="Nome do seu link..."
             value={linkName}
             onChange={(e) => setLinkName(e.target.value)}
@@ -129,7 +129,7 @@ function Admin() {
           </label>
           <Input
             type="url"
-            name="link-url"
+            id="link-url"
             placeholder="Digite a URL do seu link..."
             value={linkUrl}
             onChange={(e) => setLinkUrl(e.target.value)}
