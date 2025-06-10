@@ -24,13 +24,13 @@ function Layout() {
 
   return (
     <main
-      className={`w-full h-screen main  ${
+      className={`w-full min-h-screen main  ${
         isDarkMode ? " text-white" : "text-black"
       } ${isDarkMode ? "darkMode" : "lightMode"}`}
     >
       <button
         onClick={toggleDarkMode}
-        className="absolute top-4 right-4 w-16 h-8 flex items-center rounded-full transition-colors duration-300
+        className="absolute md:fixed top-4 right-4 w-16 h-8 flex items-center rounded-full transition-colors duration-300
                      bg-gray-300 dark:bg-gray-700"
       >
         {/* Ícone dentro do thumb */}

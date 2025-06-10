@@ -1,71 +1,62 @@
-import { useState, type FormEvent } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useState, useEffect, type FormEvent } from "react";
+import { NavLink, useNavigate, Navigate } from "react-router-dom";
+
+import { toast } from "react-toastify";
+
 import Input from "../../components/Input";
+import Button from "../../components/Button";
+
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import { auth } from "../../services/firebaseConnection";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 
 function Login() {
+  const [notSigned, setNotSigned] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [showPassword, setShowPassword] = useState(false);
 
-  const [messageBox, setMessageBox] = useState({
-    error: false,
-    message: "",
-  });
-  const [messageBoxFadeIn, setMessageBoxFadeIn] = useState(false);
-
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (user) {
+         setNotSigned(false);
+       } else {
+         setNotSigned(true);
+       }
+    })
+
+    return () => {
+      unsub();
+    }
+  })
 
   function handdleSubmit(e: FormEvent) {
     e.preventDefault();
 
-    function TimeOut() {
-      setTimeout(() => {
-        setMessageBoxFadeIn(false);
-      }, 3000);
-
-      setTimeout(() => {
-        setMessageBox({
-          error: false,
-          message: "",
-        });
-      }, 3500);
-    }
-
     if (email === "" || password === "") {
-      setMessageBox({
-        error: true,
-        message: "Todos os campos devem ser preenchidos!",
-      });
-      setMessageBoxFadeIn(true);
-      TimeOut();
-
+      toast.error("Preencha todos os campos!");
       return;
     }
 
     async function signIn() {
       await signInWithEmailAndPassword(auth, email, password)
         .then(() => {
+          toast.success("Logado com sucesso!");
           navigate("/admin", { replace: true });
         })
         .catch((error) => {
           console.error("Erro ao logar", error);
-          setMessageBox({
-            error: true,
-            message:
-              "Erro ao fazer login, verifique se o email e senha estão corretos!",
-          });
-          setMessageBoxFadeIn(true);
-
-          TimeOut();
+          toast.error("Erro ao logar! Verifique se os email e senha estão corretos.");
         });
     }
-
     signIn();
+  }
+
+  if (!notSigned) {
+    return <Navigate to="/admin" />;
   }
 
   return (
@@ -83,16 +74,6 @@ function Login() {
         onSubmit={handdleSubmit}
         className="flex flex-col items-center w-11/12 max-w-xl text-center gap-3.5 relative"
       >
-        {messageBox.error && (
-          <div
-            className={`bg-red-100 text-red-500 border-red-500 w-70 p-2.5 rounded-sm font-semibold border-3 absolute -top-21 message-box ${
-              messageBoxFadeIn ? "fade-in" : "fade-out"
-            } md:w-80`}
-          >
-            <h2>{messageBox.message}</h2>
-          </div>
-        )}
-
         <Input
           type="email"
           placeholder="Digite seu email"
@@ -126,12 +107,7 @@ function Login() {
           </div>
         </div>
 
-        <button
-          type="submit"
-          className="text-white w-11/12 max-w-xl bg-gradient-to-l from-yellow-500 to-orange-400 py-2 rounded-lg text-lg font-medium  hover:from-yellow-600 hover:to-orange-500 transition-colors duration-300"
-        >
-          Entrar
-        </button>
+        <Button>Entar</Button>
       </form>
     </div>
   );

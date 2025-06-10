@@ -7,26 +7,36 @@ import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import Networks from "./pages/Networks";
 
+import { Private } from "./routes/Private";
+
 export const router = createHashRouter([
   {
     element: <Layout />,
     children: [
       {
         path: "/",
-        element: <Home />
+        element: <Home />,
       },
       {
         path: "/login",
-        element: <Login />
+        element: <Login />,
       },
       {
         path: "/admin",
-        element: <Admin />
+        element: (
+          <Private>
+            <Admin />
+          </Private>
+        ),
       },
       {
-        path: "/networks",
-        element: <Networks />
-      }
-    ]
-  }
+        path: "/admin/social",
+        element: (
+          <Private>
+            <Networks />
+          </Private>
+        ),
+      },
+    ],
+  },
 ]);
